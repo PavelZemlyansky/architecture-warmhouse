@@ -1,0 +1,38 @@
+@startuml
+
+!include ./C4templates/C4_Component.puml
+
+Container(devices, "Devices microservice", "Go") {
+    Component(dbcont, "PostgreSQL database controller", "Handles PostgreSQL database interaction")
+    Component(apiController, "API controller", "Handles interaction via API")
+}
+
+Container(telemetry, "Telemetry microservice", "Go") {
+    Component(dbcont3, "PostgreSQL database controller", "Handles PostgreSQL database interaction")
+    Component(apiController3, "API controller", "Handles interaction via API")
+    Component(trigger, "Triggers logic", "Implements triggers and signals logic")
+}
+Container(Security, "Security microservice", "Go") {
+    Component(dbcont1, "PostgreSQL database controller", "Handles PostgreSQL database interaction")
+    Component(apiController1, "API controller", "Handles interaction via API")
+    Component(Encryption, "Encryption module", "Sign and release tokens")
+    Component(cert, "Certificate Management module", "Release and uploads certificates to APIGateway")
+}
+
+Container(bff, "Backend for Frontend", "Go") {
+    Component(front, "Front", "User web page rendering")
+    Component(auth, "Authorization", "Handles user authorization")
+    Component(routes, "Router", "Stores host paths for APIs in system")
+}
+
+Rel(apiController, dbcont, "write and read data")
+Rel(apiController3, dbcont3, "write and read data")
+Rel(apiController1, dbcont1, "write and read data")
+Rel(trigger, dbcont3, "read data")
+Rel(trigger, apiController3, "release signals")
+Rel(apiController1, Encryption, "Get token")
+Rel(apiController1, cert, "release certificate")
+Rel(front, auth, "Authorize client")
+Rel(front, routes, "get routes")
+
+@enduml

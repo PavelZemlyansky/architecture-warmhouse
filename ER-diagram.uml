@@ -1,0 +1,84 @@
+@startuml
+
+title Databases and tables inside PostgreSQL container
+
+package DeviceControl {
+class Devices {
+  +uuid id
+  +int type
+  +int location_id
+  +timestamp add_date
+
+}
+class Locations {
+  +int id
+  +int host_id
+  +varchar country
+  +varchar city
+  +varchar village
+  +varchar house
+  +varchar appartment
+
+}
+class Rules {
+  +int id
+  +uuid device_id
+  +int trigger_id
+  +int action_type
+}
+
+class Hosts {
+  +int id
+  +varchar host_login
+  +int location_id
+}
+}
+
+package Telemetry {
+  class DeviceTelemetry {
+    +int id
+    +uuid device_id
+    +varchar state
+    +decimal value
+    +timestamp time
+}
+  class Triggers {
+    +int id
+    +uuid device_id
+    +decimal maxvalue
+    +decimal minvalue
+    +varchar device_state
+    +boolean is_active
+    +int pack_id
+  }
+}
+
+package Security {
+  class Users {
+    +varchar login
+    +varchar pass_hash
+    +varchar name
+    +varchar middlename
+    +varchar lastname
+    +varchar phone
+    +varchar email
+    +boolean is_superuser
+    +boolean is_active
+    +timestamp registered_at
+  }
+
+  class Tokens {
+    +varchar body
+    +timestamp released_at
+    +timestamp expires_at
+    +varchar login
+  }
+
+}
+
+Devices "0..N" -- "1" Locations
+Rules "0..N" -- "1" Devices
+Hosts "1..N" -- "0..N" Locations
+Triggers "0..N" -- "0..N" DeviceTelemetry
+Users "1" -- "0..N" Tokens
+@enduml
