@@ -1,0 +1,221 @@
+openapi: 3.0.4
+info:
+  title: Swagger Telemetry
+  description: |-
+    This is a Telemetry microservice API file
+  version: '1'
+servers:
+  - url: https://warmhouse.com/telemetry/api/v1/
+paths:
+  /createTrigger:
+    post:
+      summary: create new trigger
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createTriggerRequest'
+      responses:
+        '200':
+          description: Success
+        '422':
+          description: Invalid request
+        default:
+          description: Unexpected error
+  /deleteTrigger{trigger_id}:
+    delete:
+      summary: delete trigger
+      parameters:
+        - name: trigger_id
+          in: path
+          description: The name that needs to be fetched. Use user1 for testing
+          required: true
+          schema:
+            type: integer     
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Object not found
+        '422':
+          description: Invalid request
+        default:
+          description: Unexpected error
+  /updateTrigger:
+    patch:
+      summary: update a trigger
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TriggerObject'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Object not found
+        '422':
+          description: Invalid request
+        default:
+          description: Unexpected error
+  /getTrigger{trigger_id}:
+    get:
+      summary: get trigger
+      parameters:
+        - name: trigger_id
+          in: path
+          required: true
+          schema:
+            type: integer     
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TriggerObject' 
+        '400':
+          description: Object not found
+        '422':
+          description: Invalid request
+        default:
+          description: Unexpected error 
+  
+  /getTelemetry:
+    post:
+      summary: get telemetry events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/getTelemetry'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TelemetryEvent'
+        '422':
+          description: Invalid request
+        default:
+          description: Unexpected error
+  /postTelemetry:
+    post:
+      summary: post a new telemetry event
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelemetryEvent'
+      responses:
+        '200':
+          description: Success
+        '422':
+          description: Invalid request
+        default:
+          description: Unexpected error
+
+components:
+  schemas:
+    createTriggerRequest:
+      required:
+        - device_id
+      type: object
+      properties:
+        device_id:
+          type: string
+          example: bd2d2351-64be-4eb0-ad08-a912333c1a5f
+        maxvalue:
+          type: number
+          example: 40.
+        minvalue:
+          type: number
+          example: 20.5
+        device_state:
+          type: string
+          example: off
+          enum:
+            - on
+            - off
+            - open
+            - closed 
+            - error
+        is_active:
+          type: boolean
+          example: false
+        pack_id:
+          type: integer
+          example: 673
+    TriggerObject:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 56
+        device_id:
+          type: string
+          example: bd2d2351-64be-4eb0-ad08-a912333c1a5f
+        maxvalue:
+          type: number
+          example: 40.
+        minvalue:
+          type: number
+          example: 20.5
+        device_state:
+          type: string
+          example: off
+          enum:
+            - on
+            - off
+            - open
+            - closed 
+            - error
+        is_active:
+          type: boolean
+          example: false
+        pack_id:
+          type: integer
+          example: 673
+    getTelemetry:
+      required:
+        - device_id
+      type: object
+      properties:
+        device_id:
+          type: string
+          example: bd2d2351-64be-4eb0-ad08-a912333c1a5f
+        from_time:
+          type: string
+          example: 2012-04-23T18:25:43.511Z
+        to_time:
+          type: string
+          example: 2012-04-23T18:25:43.511Z
+    TelemetryEvent:
+      required:
+        - device_id
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 56
+        device_id:
+          type: string
+          example: bd2d2351-64be-4eb0-ad08-a912333c1a5f
+        state:
+          type: string
+          example: off
+          enum:
+            - on
+            - off
+            - open
+            - closed 
+            - error
+        value:
+          type: number
+          example: 20.5
+        time:
+          type: string
+          example: 2012-04-23T18:25:43.511Z    

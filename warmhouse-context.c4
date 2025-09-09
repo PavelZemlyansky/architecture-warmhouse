@@ -1,0 +1,18 @@
+@startuml
+
+!include ./C4templates/C4_Context.puml
+
+Person_Ext(client, "Client", "Пользователь системы")
+Person(support, "Support Employee", "Сотрудник поддержки")
+System_Ext(device, "Device", "устройство")
+System(warmhouse, "Warmhouse", "Система Теплый Дом")
+
+
+Rel(client, warmhouse, "CRUD devices", "HTTPS")
+Rel(client, warmhouse, "CRUD rules" , "HTTPS")
+Rel(client, warmhouse, "Get Telemetry", "HTTPS")
+Rel(support, warmhouse, "Get logs", "SSH")
+Rel(warmhouse, device, "Get value & status", "HTTPS")
+Rel(warmhouse, device, "Set status", "HTTPS")
+
+@enduml

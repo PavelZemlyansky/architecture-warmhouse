@@ -1,0 +1,23 @@
+@startuml
+
+title Backend for Frontend Authorization component
+class User {
+  +String login
+  +String password
+  +String role
+  +Token token
+  +void login(login, password)
+  +void logout()
+}
+
+class Token {
+  +String body
+  +String signature
+  +String expires
+  +String issuer
+  +void kill()
+}
+
+
+User "1" -- "0-1" Token : has
+@enduml

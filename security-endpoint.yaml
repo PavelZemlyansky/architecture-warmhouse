@@ -1,0 +1,198 @@
+openapi: 3.0.4
+info:
+  title: Swagger Security
+  description: |-
+    This is a Security microservice API file
+  version: '1'
+servers:
+  - url: https://warmhouse.com/security/api/v1/
+paths:
+  /createUser:
+    post:
+      summary: register new user account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Success
+        '409':
+          description: Username already exist
+        '422':
+          description: Invalid request
+        default:
+          description: Unexpected error
+
+  /getUser{login}:
+    get:
+      summary: get user account info
+      parameters:
+        - name: login
+          in: path
+          required: true
+          schema:
+            type: string     
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User' 
+        '400':
+          description: Object not found
+        '422':
+          description: Invalid request
+        default:
+          description: Unexpected error 
+
+  /updateUser:
+    patch:
+      summary: update user account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: User not found
+        '422':
+          description: Invalid request
+        default:
+          description: Unexpected error
+
+  /releaseToken:
+    post:
+      summary: release new token for a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '403':
+          description: Incorrect username or password
+        '422':
+          description: Invalid request
+        default:
+          description: Unexpected error
+  /checkToken{token}:
+    get:
+      summary: check if token is valid and active
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string     
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token' 
+        '400':
+          description: Token is invalid or expired
+        '422':
+          description: Invalid request
+        default:
+          description: Unexpected error 
+  /killToken{token}:
+    get:
+      summary: set token expiration time to now
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string     
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Token is invalid or expired
+        '422':
+          description: Invalid request
+        default:
+          description: Unexpected error 
+components:
+  schemas:
+    User:
+      required:
+        - login
+      type: object
+      properties:
+        login:
+          type: string
+          example: vikusik16
+        pass_hash:
+          type: string
+          example: 8cb2237d0679ca88db6464eac60da96345513964
+        name: 
+          type: string
+          example: Виктория
+        middlename: 
+          type: string
+          example: Олеговна
+        lastname: 
+          type: string
+          example: Петрова
+        phone: 
+          type: string
+          example: +79267512097
+        email: 
+          type: string
+          example: vikusik16@aol.com
+        is_superuser:
+          type: boolean
+          example: false
+        is_active:
+          type: boolean
+          example: false
+        registered_at:
+          type: string
+          example: 2012-04-23T18:25:43.511Z
+    Token:
+      required:
+        - login
+      type: object
+      properties:
+        token:
+          type: string
+          example: 53302a65-b54a-4058-89df-d56dc522aa86-4ecd0709-96fd-4a63-810e-dc45a8258cd4
+        signature: 
+          type: string
+          example: b00g9hcb-ibah-agbe-efkm-kbckjb99hhec-aljkgdgf-fcmk-ahc0-e8gl-kjabhe9bejka
+        released_at:
+          type: string
+          example: 2012-04-23T18:25:43.511Z
+        expires_at:
+          type: string
+          example: 2012-05-23T18:25:43.511Z
+        login:
+          type: string
+          example: vikusik16
+    TokenRequest:
+      required:
+        - login
+        - password
+      type: object
+      properties:
+        login:
+          type: string
+          example: vikusik16
+        password:
+          type: string
+          example: 80Dr2^Q`

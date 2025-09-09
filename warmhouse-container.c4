@@ -1,0 +1,34 @@
+@startuml
+
+!include ./C4templates/C4_Container.puml
+
+Person_Ext(user, Client, "User")
+System_Ext(device, "IoT Device", "Датчики, камеры, реле")
+
+System_Boundary(c1, "Warmhouse") {
+    Container(devices, "Devices", "Go", "Микросервис управления устройствами")
+    Container(telemetry, "Telemetry", "Go", "Микросервис сбора телеметрии")
+    Container(security, "Security", "Go", "Микросервис управления правами, ролями, сертификатами")
+    Container(bff, "Backend for Frontend", "nginx", "Микросервис, управляющий фронтом")
+    ContainerDb(database1, "SQL Database", "PostgreSQL", "Хранение сущностей")
+    Container(mqtt, "MQTT Broker", "EMQX", "MQTT-брокер сообщений телеметрии")
+}
+ 
+Rel(device, mqtt, "Telemetry streaming", "MQTT")
+Rel(bff, security, "Auth and get token", "HTTP")
+Rel(user, security, "Get device certificate", "HTTPS")
+Rel(user, security, "Register new user", "HTTPS")
+Rel(user, devices, "CRUD for devices", "HTTPS")
+Rel(devices, security, "check token", "HTTP")
+Rel(telemetry, security, "check token", "HTTP")
+Rel(devices, database1, "get/store data", "SQL")
+Rel(security, database1, "get/store data", "SQL")
+Rel(telemetry, database1, "get/store data", "SQL")
+Rel(devices, device, "set device status", "HTPS")
+Rel(user, devices, "Set rule", "HTPS")
+Rel(devices, telemetry, "set trigget and receive signal", "HTTP")
+Rel(user, bff, "GUI", "HTTPS")
+Rel(mqtt, telemetry, "Telemetry streaming", "MQTT")
+
+
+@enduml
